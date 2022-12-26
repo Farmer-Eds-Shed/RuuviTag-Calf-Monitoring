@@ -1,0 +1,731 @@
+[
+    {
+        "id": "b4f5065cbc26f3a1",
+        "type": "tab",
+        "label": "RuuviTag",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "7480a175333eeb4f",
+        "type": "mqtt in",
+        "z": "b4f5065cbc26f3a1",
+        "name": "BTtoMQTT",
+        "topic": "home/OpenMQTTGateway_ESP32_BLE/BTtoMQTT/C2DA915125F7",
+        "qos": "2",
+        "datatype": "json",
+        "broker": "28dc57a0be8e8dc4",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 220,
+        "y": 220,
+        "wires": [
+            [
+                "4da7cc07c6cba062"
+            ]
+        ]
+    },
+    {
+        "id": "4da7cc07c6cba062",
+        "type": "debug",
+        "z": "b4f5065cbc26f3a1",
+        "name": "debug 1",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 380,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "41bc513f2ad32a73",
+        "type": "mqtt in",
+        "z": "b4f5065cbc26f3a1",
+        "d": true,
+        "name": "",
+        "topic": "+/#",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "28dc57a0be8e8dc4",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 210,
+        "y": 320,
+        "wires": [
+            [
+                "4da7cc07c6cba062"
+            ]
+        ]
+    },
+    {
+        "id": "a914c1647edeb071",
+        "type": "mqtt in",
+        "z": "b4f5065cbc26f3a1",
+        "name": "RuuviGateway",
+        "topic": "ruuvi/+",
+        "qos": "2",
+        "datatype": "json",
+        "broker": "28dc57a0be8e8dc4",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 220,
+        "y": 380,
+        "wires": [
+            [
+                "12650b905b5eeb59"
+            ]
+        ]
+    },
+    {
+        "id": "12650b905b5eeb59",
+        "type": "debug",
+        "z": "b4f5065cbc26f3a1",
+        "name": "debug 2",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 380,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "27560dacc1218f32",
+        "type": "function",
+        "z": "b4f5065cbc26f3a1",
+        "name": "Ruuvi Parse",
+        "func": "let str = msg.payload.data;\nconst data = {};\n\n//type\nlet part1 = \"0x\" + str[14] + str[15] ;\ndata.type = parseInt(part1);\n\n//temperature\nlet part2 = \"0x\" + str[16] + str[17] + str[18] + str[19];\ntemperature = parseInt(part2);\nif (temperature > 32767) temperature -= 65534; // two's complement\ndata.temperature = temperature * 0.005;\n\n//humidity\nlet part3 = \"0x\" + str[20] + str[21] + str[22] + str[23];\ndata.humidity = parseInt(part3) / 400.0;\n\n//pressure\nlet part4 = \"0x\" + str[24] + str[25] + str[26] + str[27];\ndata.pressure = parseInt(part4) + 50000;\n\n//accelerometer\n//X\nlet part5 = \"0x\" + str[28] + str[29] + str[30] + str[31];\naccelerationX = parseInt(part5);\nif (accelerationX > 32767) accelerationX -= 65536; // two's complement\ndata.accelerationX = accelerationX /1000;\n//Y\nlet part6 = \"0x\" + str[32] + str[33] + str[34] + str[35];\naccelerationY = parseInt(part6);\nif (accelerationY > 32767) accelerationY -= 65536; // two's complement\ndata.accelerationY = accelerationY /1000;\n//Z\nlet part7 = \"0x\" + str[36] + str[37] + str[38] + str[39];\naccelerationZ = parseInt(part7);\nif (accelerationZ > 32767) accelerationZ -= 65536; // two's complement\ndata.accelerationZ = accelerationZ /1000\n\n//Power\nlet part8 = \"0x\" + str[40] + str[41] + str[42] + str[43];\nlet power = parseInt(part8).toString(2);\nvoltage = power.substr(0, 11);\nTXdbm = power.slice(-5);\ndata.voltage = (parseInt(voltage, 2) + 1600) / 1000;\ndata.TXdbm = (parseInt(TXdbm, 2) & 0b11111) * 2 - 40;\n\n//movementCounter\nlet part9 = \"0x\" + str[44] + str[45];\ndata.movementCounter = parseInt(part9);\n\n//measurementSequenceNumber\nlet part10 = \"0x\" + str[46] + str[47] + str[48] + str[49];\ndata.measurementSequenceNumber = parseInt(part10);\n\n//mac address\nlet part11 = str.slice(-12);\ndata.mac = part11;\n\nmsg.payload = data\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 370,
+        "y": 780,
+        "wires": [
+            [
+                "bfb5b1b29d267de5",
+                "485ae91f80a4f2c3",
+                "0a3ef1a44e65668e",
+                "a81b98893795e42e"
+            ]
+        ]
+    },
+    {
+        "id": "006ad81e7a166d15",
+        "type": "mqtt in",
+        "z": "b4f5065cbc26f3a1",
+        "name": "C5:EF:72:2B:B3:1C",
+        "topic": "ruuvi/C5:EF:72:2B:B3:1C",
+        "qos": "2",
+        "datatype": "json",
+        "broker": "28dc57a0be8e8dc4",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 190,
+        "y": 780,
+        "wires": [
+            [
+                "27560dacc1218f32"
+            ]
+        ]
+    },
+    {
+        "id": "2a9835ddd9cb2121",
+        "type": "function",
+        "z": "b4f5065cbc26f3a1",
+        "name": "Ruuvi Parse",
+        "func": "let str = msg.payload.data;\nconst data = {};\n\n//type\nlet part1 = \"0x\" + str[14] + str[15] ;\ndata.type = parseInt(part1);\n\n//temperature\nlet part2 = \"0x\" + str[16] + str[17] + str[18] + str[19];\ntemperature = parseInt(part2);\nif (temperature > 32767) temperature -= 65534; // two's complement\ndata.temperature = temperature * 0.005;\n\n//humidity\nlet part3 = \"0x\" + str[20] + str[21] + str[22] + str[23];\ndata.humidity = parseInt(part3) / 400.0;\n\n//pressure\nlet part4 = \"0x\" + str[24] + str[25] + str[26] + str[27];\ndata.pressure = parseInt(part4) + 50000;\n\n//accelerometer\n//X\nlet part5 = \"0x\" + str[28] + str[29] + str[30] + str[31];\naccelerationX = parseInt(part5);\nif (accelerationX > 32767) accelerationX -= 65536; // two's complement\ndata.accelerationX = accelerationX /1000;\n//Y\nlet part6 = \"0x\" + str[32] + str[33] + str[34] + str[35];\naccelerationY = parseInt(part6);\nif (accelerationY > 32767) accelerationY -= 65536; // two's complement\ndata.accelerationY = accelerationY /1000;\n//Z\nlet part7 = \"0x\" + str[36] + str[37] + str[38] + str[39];\naccelerationZ = parseInt(part7);\nif (accelerationZ > 32767) accelerationZ -= 65536; // two's complement\ndata.accelerationZ = accelerationZ /1000\n\n//Power\nlet part8 = \"0x\" + str[40] + str[41] + str[42] + str[43];\nlet power = parseInt(part8).toString(2);\nvoltage = power.substr(0, 11);\nTXdbm = power.slice(-5);\ndata.voltage = (parseInt(voltage, 2) + 1600) / 1000;\ndata.TXdbm = (parseInt(TXdbm, 2) & 0b11111) * 2 - 40;\n\n//movementCounter\nlet part9 = \"0x\" + str[44] + str[45];\ndata.movementCounter = parseInt(part9);\n\n//measurementSequenceNumber\nlet part10 = \"0x\" + str[46] + str[47] + str[48] + str[49];\ndata.measurementSequenceNumber = parseInt(part10);\n\n//mac address\nlet part11 = str.slice(-12);\ndata.mac = part11;\n\nmsg.payload = data\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 370,
+        "y": 580,
+        "wires": [
+            [
+                "ce4a376bb317bbcb",
+                "fc49ba30c2f78d6d",
+                "c897f232d4c58e48",
+                "3032e07387cdd076"
+            ]
+        ]
+    },
+    {
+        "id": "e1ddc6b83ef45bb4",
+        "type": "mqtt in",
+        "z": "b4f5065cbc26f3a1",
+        "name": "C2:DA:91:51:25:F7",
+        "topic": "ruuvi/C2:DA:91:51:25:F7",
+        "qos": "2",
+        "datatype": "json",
+        "broker": "28dc57a0be8e8dc4",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 190,
+        "y": 580,
+        "wires": [
+            [
+                "2a9835ddd9cb2121"
+            ]
+        ]
+    },
+    {
+        "id": "a93277def1d0b76a",
+        "type": "ui_chart",
+        "z": "b4f5065cbc26f3a1",
+        "name": "",
+        "group": "1217830b628d9a32",
+        "order": 1,
+        "width": "0",
+        "height": "0",
+        "label": "Calf 1 Movement",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 830,
+        "y": 520,
+        "wires": [
+            [
+                "e120d7610a672d38"
+            ]
+        ]
+    },
+    {
+        "id": "ce4a376bb317bbcb",
+        "type": "function",
+        "z": "b4f5065cbc26f3a1",
+        "name": "accelerationX",
+        "func": "msg.payload = msg.payload.accelerationX\nmsg.topic = \"accelerationX\"\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 580,
+        "y": 520,
+        "wires": [
+            [
+                "68e48d0b71d4215d"
+            ]
+        ]
+    },
+    {
+        "id": "fc49ba30c2f78d6d",
+        "type": "function",
+        "z": "b4f5065cbc26f3a1",
+        "name": "accelerationY",
+        "func": "msg.payload = msg.payload.accelerationY\nmsg.topic = \"accelerationY\"\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 580,
+        "y": 560,
+        "wires": [
+            [
+                "68e48d0b71d4215d"
+            ]
+        ]
+    },
+    {
+        "id": "c897f232d4c58e48",
+        "type": "function",
+        "z": "b4f5065cbc26f3a1",
+        "name": "accelerationZ",
+        "func": "msg.payload = msg.payload.accelerationZ\nmsg.topic = \"accelerationZ\"\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 580,
+        "y": 600,
+        "wires": [
+            [
+                "68e48d0b71d4215d"
+            ]
+        ]
+    },
+    {
+        "id": "6fe87910eb8403c2",
+        "type": "ui_chart",
+        "z": "b4f5065cbc26f3a1",
+        "name": "",
+        "group": "1217830b628d9a32",
+        "order": 2,
+        "width": "0",
+        "height": "0",
+        "label": "Calf 1 Temperature",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 830,
+        "y": 640,
+        "wires": [
+            [
+                "61a475b87579bd02"
+            ]
+        ]
+    },
+    {
+        "id": "3032e07387cdd076",
+        "type": "function",
+        "z": "b4f5065cbc26f3a1",
+        "name": "Temperature",
+        "func": "msg.payload = msg.payload.temperature\nmsg.topic = \"temperature\"\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 570,
+        "y": 640,
+        "wires": [
+            [
+                "6fe87910eb8403c2"
+            ]
+        ]
+    },
+    {
+        "id": "61a475b87579bd02",
+        "type": "debug",
+        "z": "b4f5065cbc26f3a1",
+        "name": "debug 4",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1020,
+        "y": 640,
+        "wires": []
+    },
+    {
+        "id": "e120d7610a672d38",
+        "type": "debug",
+        "z": "b4f5065cbc26f3a1",
+        "name": "debug 5",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1020,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "a28468282d7d4c52",
+        "type": "ui_chart",
+        "z": "b4f5065cbc26f3a1",
+        "name": "",
+        "group": "a2a1981745edc0f1",
+        "order": 1,
+        "width": "0",
+        "height": "0",
+        "label": "Calf 2 Movement",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 830,
+        "y": 720,
+        "wires": [
+            [
+                "fef9f4f812303df3"
+            ]
+        ]
+    },
+    {
+        "id": "bfb5b1b29d267de5",
+        "type": "function",
+        "z": "b4f5065cbc26f3a1",
+        "name": "accelerationX",
+        "func": "msg.payload = msg.payload.accelerationX\nmsg.topic = \"accelerationX\"\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 580,
+        "y": 720,
+        "wires": [
+            [
+                "1a835e06ceee6d50"
+            ]
+        ]
+    },
+    {
+        "id": "485ae91f80a4f2c3",
+        "type": "function",
+        "z": "b4f5065cbc26f3a1",
+        "name": "accelerationY",
+        "func": "msg.payload = msg.payload.accelerationY\nmsg.topic = \"accelerationY\"\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 580,
+        "y": 760,
+        "wires": [
+            [
+                "1a835e06ceee6d50"
+            ]
+        ]
+    },
+    {
+        "id": "0a3ef1a44e65668e",
+        "type": "function",
+        "z": "b4f5065cbc26f3a1",
+        "name": "accelerationZ",
+        "func": "msg.payload = msg.payload.accelerationZ\nmsg.topic = \"accelerationZ\"\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 580,
+        "y": 800,
+        "wires": [
+            [
+                "1a835e06ceee6d50"
+            ]
+        ]
+    },
+    {
+        "id": "ddb59852a3b292d7",
+        "type": "ui_chart",
+        "z": "b4f5065cbc26f3a1",
+        "name": "",
+        "group": "a2a1981745edc0f1",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "label": "Calf 2 Temperature",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 830,
+        "y": 840,
+        "wires": [
+            [
+                "5916e5e994ecc11f"
+            ]
+        ]
+    },
+    {
+        "id": "a81b98893795e42e",
+        "type": "function",
+        "z": "b4f5065cbc26f3a1",
+        "name": "Temperature",
+        "func": "msg.payload = msg.payload.temperature\nmsg.topic = \"temperature\"\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 570,
+        "y": 840,
+        "wires": [
+            [
+                "ddb59852a3b292d7"
+            ]
+        ]
+    },
+    {
+        "id": "5916e5e994ecc11f",
+        "type": "debug",
+        "z": "b4f5065cbc26f3a1",
+        "name": "debug 6",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1000,
+        "y": 840,
+        "wires": []
+    },
+    {
+        "id": "fef9f4f812303df3",
+        "type": "debug",
+        "z": "b4f5065cbc26f3a1",
+        "name": "debug 7",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1000,
+        "y": 720,
+        "wires": []
+    },
+    {
+        "id": "07da2851ebc2acbf",
+        "type": "rbe",
+        "z": "b4f5065cbc26f3a1",
+        "name": "",
+        "func": "rbe",
+        "gap": "",
+        "start": "",
+        "inout": "out",
+        "septopics": true,
+        "property": "payload",
+        "topi": "topic",
+        "x": 830,
+        "y": 260,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "68e48d0b71d4215d",
+        "type": "switch",
+        "z": "b4f5065cbc26f3a1",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "btwn",
+                "v": "-4",
+                "vt": "num",
+                "v2": "4",
+                "v2t": "num"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 790,
+        "y": 580,
+        "wires": [
+            [
+                "a93277def1d0b76a"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "1a835e06ceee6d50",
+        "type": "switch",
+        "z": "b4f5065cbc26f3a1",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "btwn",
+                "v": "-4",
+                "vt": "num",
+                "v2": "4",
+                "v2t": "num"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 790,
+        "y": 780,
+        "wires": [
+            [
+                "a28468282d7d4c52"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "28dc57a0be8e8dc4",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "ws://192.168.1.23:1884/mqtt",
+        "port": "1884",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "1",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "1217830b628d9a32",
+        "type": "ui_group",
+        "name": "Calf 1",
+        "tab": "a2617cde6c280a7c",
+        "order": 1,
+        "disp": true,
+        "width": 8,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "a2a1981745edc0f1",
+        "type": "ui_group",
+        "name": "Calf 2",
+        "tab": "a2617cde6c280a7c",
+        "order": 2,
+        "disp": true,
+        "width": 8,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "a2617cde6c280a7c",
+        "type": "ui_tab",
+        "name": "Calf Monitors",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    }
+]
