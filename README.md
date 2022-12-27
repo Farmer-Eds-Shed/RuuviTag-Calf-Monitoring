@@ -1,5 +1,6 @@
 # RuuviTag-Calf-Monitoring
 RuuviTag Node-Red project to monitor new born calves.
+![alt text](https://github.com/Farmer-Eds-Shed/RuuviTag-Calf-Monitoring/blob/main/images/image.png)
 
 
 #### Gateway device:
