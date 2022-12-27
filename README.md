@@ -1,5 +1,7 @@
 # RuuviTag-Calf-Monitoring
 RuuviTag Node-Red project to monitor new born calves.
+
+Sample data from tests, not on an actual animal yet.
 ![alt text](https://github.com/Farmer-Eds-Shed/RuuviTag-Calf-Monitoring/blob/main/images/image.png)
 
 
