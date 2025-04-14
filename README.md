@@ -1,9 +1,69 @@
 # RuuviTag-Calf-Monitoring
-RuuviTag Node-Red project to monitor new born calves.
 
-Sample data from tests, not on an actual animal yet.
-![alt text](https://github.com/Farmer-Eds-Shed/RuuviTag-Calf-Monitoring/blob/main/images/image.png)
+A Node-RED-based monitoring system for tracking calf movement and behavior using **RuuviTag** Bluetooth sensors and low-cost Raspberry Pi-based gateways. This project explores open-source, scalable, and affordable methods for **precision livestock monitoring**, starting with **dairy calves** aged 2–10 weeks.
 
+---
 
-#### Gateway device:
-Current setup using a Raspberry Pi 3 as Gateway running https://github.com/Scrin/ruuvi-go-gateway.
+### 📦 Project Goals
+
+- 🐄 Monitor calf movement and orientation using BLE tags
+- 📐 Track posture (lying, standing, active bursts)
+- 📡 Decode and forward RuuviTag data via MQTT
+- 🌐 Centralize data on a remote server for analysis and dashboards
+- 🧠 Enable future behavior classification using AI or rule-based logic
+
+---
+
+### 🧰 Hardware Setup
+
+| Component | Role |
+|----------|------|
+| 🧠 Raspberry Pi Zero 2 W | BLE gateways scanning for RuuviTags, forwarding data via MQTT using **Ruuvi Go Gateway** software |
+| 🏷️ RuuviTag Sensors | Mounted on calf collars to track movement & orientation |
+| 🐮 Bite-proof Enclosures | Custom mounts to protect tags on collars |
+
+---
+
+### 🛠️ Software Stack
+
+- **Node-RED** (hosted remotely) – data parsing, logic, visualization
+- **MQTT Broker** – receives BLE data from gateways
+- **Ruuvi Go Gateway** – runs on Raspberry Pi Zero 2 W to forward RuuviTag data
+- **InfluxDB + Grafana**  – logging and historical visualization
+
+---
+
+### 📊 Project Functions
+
+- Parse BLE Format 5 broadcasts from RuuviTags
+- Extract acceleration, orientation, battery,
+- Push real-time readings to the MQTT broker
+- Visualize calf activity across pens
+- Lay foundation for AI-driven behavioral insights
+
+---
+
+### 🚧 Current Status
+
+This project is a reboot of an earlier prototype. Flows will be rebuilt with:
+- Streamlined MQTT BLE gateways (Pi Zero 2 W running **Ruuvi Go Gateway** software)
+- Improved parsing logic
+- Clean, modular Node-RED dashboards and flow structure
+- Focus on practical farm conditions (pens, paddocks, gateway range, calf age)
+
+---
+
+### 📈 Future Plans
+
+- Add magnetometer parsing for posture and tilt analysis
+- Support behavior tagging for ML training
+- Explore GPS or gateway triangulation in larger paddocks
+- Integrate with optional video-based AI systems for validation
+- Expand to weaned calf groups or heifer monitoring
+
+---
+
+### 👨‍🔧 Maintainer
+
+Farmer-Ed – [@Farmer-Eds-Shed](https://github.com/Farmer-Eds-Shed)  
+📍 County Meath, Ireland
