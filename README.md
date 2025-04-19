@@ -36,28 +36,27 @@ A Node-RED-based monitoring system for tracking calf movement and behavior using
 ### 📊 Project Functions
 
 - Parse BLE Format 5 broadcasts from RuuviTags
-- Extract acceleration, orientation, battery,
+- Extract acceleration, orientation and battery data
 - Push real-time readings to the MQTT broker
 - Visualize calf activity across pens
 - Lay foundation for AI-driven behavioral insights
 
 ---
 
-### 🚧 Current Status
+### 🚧 Current WIP Status
 
 This project is a reboot of an earlier prototype. Flows will be rebuilt with:
 - Streamlined MQTT BLE gateways (Pi Zero 2 W running **Ruuvi Go Gateway** software)
 - Improved parsing logic
-- Clean, modular Node-RED dashboards and flow structure
+- Clean, modular dashboards and flow structure
 - Focus on practical farm conditions (pens, paddocks, gateway range, calf age)
 
 ---
 
 ### 📈 Future Plans
 
-- Add magnetometer parsing for posture and tilt analysis
 - Support behavior tagging for ML training
-- Explore GPS or gateway triangulation in larger paddocks
+- gateway triangulation to determin position in pens
 - Integrate with optional video-based AI systems for validation
 - Expand to weaned calf groups or heifer monitoring
 
