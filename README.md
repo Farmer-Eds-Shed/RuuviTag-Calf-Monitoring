@@ -1,6 +1,6 @@
 # RuuviTag-Calf-Monitoring
 
-A Node-RED-based monitoring system for tracking calf movement and behavior using **RuuviTag** Bluetooth sensors and low-cost Raspberry Pi-based gateways. This project explores open-source, scalable, and affordable methods for **precision livestock monitoring**, starting with **dairy calves** aged 2–10 weeks.
+A Node-RED-based monitoring system for tracking calf movement and behavior using **RuuviTag** Bluetooth sensors and low-cost Raspberry Pi-based gateways. This project explores open-source, scalable, and affordable methods for **precision livestock monitoring**, starting with **dairy/beef calves** aged 2–10 weeks.
 
 ---
 
@@ -18,15 +18,15 @@ A Node-RED-based monitoring system for tracking calf movement and behavior using
 
 | Component | Role |
 |----------|------|
-| 🧠 Raspberry Pi Zero 2 W | BLE gateways scanning for RuuviTags, forwarding data via MQTT using **Ruuvi Go Gateway** software |
+| 📶 Raspberry Pi Zero 2 W | BLE gateways scanning for RuuviTags, forwarding data via MQTT using **Ruuvi Go Gateway** software |
 | 🏷️ RuuviTag Sensors | Mounted on calf collars to track movement & orientation |
-| 🐮 Bite-proof Enclosures | Custom mounts to protect tags on collars |
+| 🖥️ Remote Server | Host Node-Red, MQTT Broker, InfluxDB and Grafana |
 
 ---
 
 ### 🛠️ Software Stack
 
-- **Node-RED** (hosted remotely) – data parsing, logic, visualization
+- **Node-RED** – data parsing, logic, visualization
 - **MQTT Broker** – receives BLE data from gateways
 - **Ruuvi Go Gateway** – runs on Raspberry Pi Zero 2 W to forward RuuviTag data
 - **InfluxDB + Grafana**  – logging and historical visualization
@@ -49,7 +49,7 @@ This project is a reboot of an earlier prototype. Flows will be rebuilt with:
 - Streamlined MQTT BLE gateways (Pi Zero 2 W running **Ruuvi Go Gateway** software)
 - Improved parsing logic
 - Clean, modular dashboards and flow structure
-- Focus on practical farm conditions (pens, paddocks, gateway range, calf age)
+- Focus on practical farm conditions (pens, gateway range, calf posture, enviroment monitoring)
 
 ---
 
